@@ -1,2 +1,2 @@
 # GridStealth
-### Turn-based top-down stealth game demo in SFML
+Turn-based top-down stealth game demo in SFML
