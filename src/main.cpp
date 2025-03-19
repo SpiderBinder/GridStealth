@@ -2,6 +2,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+#include "Game.h"
+
 int main()
 {
     std::cout << "Hello World!" << std::endl;
@@ -11,12 +13,12 @@ int main()
 
     sf::Clock clock;
 
-    //Game game(window);
+    Game game(window);
 
-    /*if (!game.init())
+    if (!game.init())
     {
         return 1;
-    }*/
+    }
 
     while (window.isOpen())
     {
@@ -36,7 +38,13 @@ int main()
             if (event.type == sf::Event::KeyPressed ||
                 event.type == sf::Event::KeyReleased)
             {
+                game.key_input(event);
+            }
 
+            if (event.type == sf::Event::MouseButtonPressed ||
+                event.type == sf::Event::MouseButtonReleased)
+            {
+                game.mouse_input(event);
             }
         }
 

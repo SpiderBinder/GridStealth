@@ -20,7 +20,9 @@ FetchContent_MakeAvailable(SFML)    # Makes sure SFML and its dependencies are a
 #---- File management & .exe creation ----#
 
 set(SOURCE_FILES 
-    src/main.cpp)  # Sets variable SOURCE_FILES to hold names & locations of files that need to be compiled into the application
+    src/main.cpp 
+    src/Game.h 
+    src/Game.cpp)  # Sets variable SOURCE_FILES to hold names & locations of files that need to be compiled into the application
 add_executable(GridStealth ${SOURCE_FILES})  # Names the application and tells compiler which source files to use
 
 target_link_libraries(GridStealth PRIVATE sfml-graphics sfml-window sfml-system sfml-network sfml-audio) # Links the SFML libraries we need to our application
