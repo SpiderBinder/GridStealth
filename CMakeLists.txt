@@ -24,7 +24,19 @@ set(SOURCE_FILES
     src/Game.h 
     src/Game.cpp
     src/GameObject.h 
-    src/GameObject.cpp)  # Sets variable SOURCE_FILES to hold names & locations of files that need to be compiled into the application
+    src/GameObject.cpp 
+    src/Entities/Entity.h 
+    src/Entities/Entity.cpp 
+    src/Entities/Enemy.h 
+    src/Entities/Enemy.cpp 
+    src/Entities/Player.h 
+    src/Entities/Player.cpp 
+    "src/Environment/Level.h" 
+    "src/Environment/Level.cpp" 
+    "src/Environment/Furniture.h" 
+    "src/Environment/Furniture.cpp" 
+    "src/Environment/Item.h" 
+    "src/Environment/Item.cpp")  # Sets variable SOURCE_FILES to hold names & locations of files that need to be compiled into the application
 add_executable(GridStealth ${SOURCE_FILES})  # Names the application and tells compiler which source files to use
 
 target_link_libraries(GridStealth PRIVATE sfml-graphics sfml-window sfml-system sfml-network sfml-audio) # Links the SFML libraries we need to our application
