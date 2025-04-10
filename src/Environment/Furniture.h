@@ -7,6 +7,8 @@
 class Furniture : public GameObject
 {
 
+public:
+
 };
 
 #endif // GRIDSTEALTH_ENVIRONMENT_FURNITURE_H

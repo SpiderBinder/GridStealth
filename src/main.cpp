@@ -47,9 +47,11 @@ int main()
                 game.mouse_input(event);
             }
         }
+        game.update(dt);
 
         window.clear(sf::Color::Black);
 
+        game.render();
         
         window.display();
     }    

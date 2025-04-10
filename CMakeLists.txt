@@ -42,7 +42,7 @@ add_executable(GridStealth ${SOURCE_FILES})  # Names the application and tells c
 target_link_libraries(GridStealth PRIVATE sfml-graphics sfml-window sfml-system sfml-network sfml-audio) # Links the SFML libraries we need to our application
 target_compile_features(GridStealth PRIVATE cxx_std_20)  # Defines which standard of C++ the compiler should use
 
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/content/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/content/)  # Copies content from source directory to build directory (so the executable can access it)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/content/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/content/)  # Copies content from source directory to build directory (so the executable can access it)
 
 if(WIN32)
     add_custom_command(

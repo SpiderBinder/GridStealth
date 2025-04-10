@@ -9,20 +9,27 @@ enum CollisionType
     Solid,
     Transparent,
     Traversable,
-    Empty
+    Null
 };
 
 class GameObject
 {
     sf::Sprite* sprite = nullptr;
-    sf::Vector2f position = sf::Vector2f(0, 0);
+    sf::Vector2i position = sf::Vector2i(0, 0);
+
+    bool is_loaded = false;
 
 public:
-    GameObject(sf::Sprite* _sprite);
+    GameObject();
+	~GameObject();
+
+    virtual void init(sf::Texture* _texture);
+    virtual void render(sf::RenderWindow& window);
 
     sf::Sprite* get_sprite();
-    sf::Vector2f get_position();
-    void set_position(sf::Vector2f new_position);
+    sf::Vector2i get_position();
+	sf::Vector2f get_float_position();
+    void set_position(sf::Vector2i new_position);
 
 };
 

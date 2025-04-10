@@ -2,11 +2,19 @@
 #ifndef GRIDSTEALTH_GAME_H
 #define GRIDSTEALTH_GAME_H
 
+#include <iostream>
+
 #include <SFML/Graphics.hpp>
+
+#include "GameObject.h"
+#include "Environment/Level.h"
 
 class Game
 {
-    sf::RenderWindow* window;
+    sf::RenderWindow& window;
+
+	sf::Texture testtexture;
+    GameObject testobject;
 
 public:
     Game(sf::RenderWindow& game_window);
