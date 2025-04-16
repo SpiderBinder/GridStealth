@@ -3,7 +3,7 @@
 
 Level::Level()
 {
-
+	// NOTE: Ideally this shouldn't be used so idk why I have this tbh
 }
 
 Level::Level(std::string directory)
@@ -18,7 +18,7 @@ Level::~Level()
 
 
 // Chonky-ass function to load level details (map, enemies, items etc) from a text file provided
-void Level::load_from_file(std::string directory)
+bool Level::load_from_file(std::string directory)
 {
 	std::ifstream filereader;
 	filereader.open(directory);
@@ -26,7 +26,7 @@ void Level::load_from_file(std::string directory)
 	if (!filereader.good())
 	{
 		std::cout << "Level file failed to open: " << directory << std::endl;
-		return;
+		return false;
 	}
 	
 	std::vector<std::string> contents;
@@ -314,12 +314,53 @@ void Level::load_from_file(std::string directory)
 		// TODO: Uncomment when Enemy class is implemented
 		//entities.push_back(Enemy());
 	}
+
+	return true;
 }
 
+bool Level::init(std::string tileset_name)
+{
+	//if (tileset.loadFromFile("../content/Assets/"))
+}
 
 // Render the level
 void Level::render(sf::RenderWindow& window)
 {
-	// Render map tiles
-	//for (int i = 0; i < )
+	// Draw tiles
+	for (int y = 0; y < wall_map.size(); y++)
+	{
+		for (int x = 0; x < wall_map[y].size(); x++)
+		{
+			switch (wall_map[x][y])
+			{
+			case TileType::Wall:
+				sprite_wall.setPosition(x * 16, y * 16);
+				window.draw(sprite_wall);
+				break;
+			case TileType::Window:
+				sprite_window.setPosition(x * 16, y * 16);
+				window.draw(sprite_window);
+				break;
+			case TileType::Empty:
+				sprite_empty.setPosition(x * 16, y * 16);
+				window.draw(sprite_empty);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	// Draw Furniture and Items
+	for (GameObject &object : objects)
+	{
+		object.render(window);
+	}
+
+	// Draw entities
+	for (Entity& entity : entities)
+	{
+		entity.render(window);
+	}
+	player.render(window);
 }

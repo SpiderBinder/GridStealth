@@ -26,6 +26,9 @@ enum TileType
 class Level
 {
 	sf::Texture tileset;
+	sf::Sprite sprite_wall;
+	sf::Sprite sprite_window;
+	sf::Sprite sprite_empty;
 
 	std::vector<std::vector<TileType>> wall_map;
 	std::vector<std::vector<CollisionType>> collision_map;
@@ -35,13 +38,15 @@ class Level
 	std::vector<Entity> entities;
 	Player player;
 
-	void load_from_file(std::string directory);
+	bool load_from_file(std::string directory);
 
 public:
 	Level();
 	Level(std::string directory);
 	~Level();
 
+	bool init(std::string tileset_name);
+	void update();
 	void render(sf::RenderWindow& window);
 
 	CollisionType get_collision(sf::Vector2i position);
