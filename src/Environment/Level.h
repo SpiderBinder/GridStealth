@@ -34,8 +34,8 @@ class Level
 	std::vector<std::vector<CollisionType>> collision_map;
 
 	// Furniture and items
-	std::vector<GameObject> objects;
-	std::vector<Entity> entities;
+	std::vector<GameObject> level_objects;
+	std::vector<Entity> level_entities;
 	Player player;
 
 	bool load_from_file(std::string directory);

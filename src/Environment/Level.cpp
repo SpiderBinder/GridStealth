@@ -167,16 +167,6 @@ bool Level::load_from_file(std::string directory)
 		}
 	}
 
-	// NOTE: Remove
-	for (int y = 0; y < wall_map.size(); y++)
-	{
-		for (int x = 0; x < wall_map[y].size(); x++)
-		{
-			std::cout << wall_map[x][y] << " ";
-		}
-		std::cout << std::endl;
-	}
-
 	// Parse object data
 	for (std::string object : objectdata)
 	{
@@ -318,9 +308,65 @@ bool Level::load_from_file(std::string directory)
 	return true;
 }
 
+// NOTE: Only to be run after load_from_file or entity and object assets will not be loaded
 bool Level::init(std::string tileset_name)
 {
-	//if (tileset.loadFromFile("../content/Assets/"))
+	bool success = true;
+
+	// Load the tileset texture
+	if (!tileset.loadFromFile("../content/Assets/Tilesets/" + tileset_name + ".png"))
+	{
+		std::cout << "Failed to load tileset: " << tileset_name << std::endl;
+		success = false;
+	}
+	else
+	// Assigns texture to environment sprites
+	sprite_wall.setTexture(tileset);
+	sprite_window.setTexture(tileset);
+	sprite_empty.setTexture(tileset);
+
+	sprite_wall.setTextureRect(sf::IntRect(0, 0, 16, 16));
+	sprite_window.setTextureRect(sf::IntRect(16, 0, 16, 16));
+	sprite_empty.setTextureRect(sf::IntRect(0, 16, 16, 16));
+
+	sprite_wall.setScale(4.0f, 4.0f);
+	sprite_window.setScale(4.0f, 4.0f);
+	sprite_empty.setScale(4.0f, 4.0f);
+
+	// NOTE: Uncomment when Furniture and Item classes are implemented
+	// Load furniture and item assets
+	/*for (GameObject object : level_objects)
+	{
+		if (!object.init())
+		{
+			std::cout << "Failed to load object: " << object.get_name() << std::endl;
+			success = false;
+		}
+		object.get_sprite().setScale(2.0f, 2.0f);
+	}*/
+
+	// NOTE: Uncomment when Enemy class is implemented
+	// Load enemy assets
+	/*for (Entity entity : level_entities)
+	{
+		if (!entity.init())
+		{
+			std::cout << "Failed to load entity: " << entity.get_name() << std::endl;
+			success = false;
+		}
+		entity.get_sprite().setScale(2.0f, 2.0f);
+	}*/
+
+	// NOTE: Uncomment when Player class is implemented
+	// Load player assets
+	/*if (!player.init())
+	{
+		std::cout << "Failed to load player: " << player.get_name() << std::endl;
+		success = false;
+	}
+	player.get_sprite().setScale(2.0f, 2.0f);*/
+
+	return success;
 }
 
 // Render the level
@@ -334,15 +380,17 @@ void Level::render(sf::RenderWindow& window)
 			switch (wall_map[x][y])
 			{
 			case TileType::Wall:
-				sprite_wall.setPosition(x * 16, y * 16);
+				sprite_wall.setPosition(x * 64, y * 64);
 				window.draw(sprite_wall);
 				break;
 			case TileType::Window:
-				sprite_window.setPosition(x * 16, y * 16);
+				sprite_window.setPosition(x * 64, y * 64);
 				window.draw(sprite_window);
 				break;
 			case TileType::Empty:
-				sprite_empty.setPosition(x * 16, y * 16);
+			case TileType::Start:
+			case TileType::Exit:
+				sprite_empty.setPosition(x * 64, y * 64);
 				window.draw(sprite_empty);
 				break;
 			default:
@@ -351,14 +399,17 @@ void Level::render(sf::RenderWindow& window)
 		}
 	}
 
+	// NOTE: Remove when gameobject classes are implemented
+	return;
+
 	// Draw Furniture and Items
-	for (GameObject &object : objects)
+	for (GameObject &object : level_objects)
 	{
 		object.render(window);
 	}
 
 	// Draw entities
-	for (Entity& entity : entities)
+	for (Entity& entity : level_entities)
 	{
 		entity.render(window);
 	}

@@ -13,8 +13,7 @@ class Game
 {
     sf::RenderWindow& window;
 
-	sf::Texture testtexture;
-    GameObject testobject;
+	Level testlevel;
 
 public:
     Game(sf::RenderWindow& game_window);
