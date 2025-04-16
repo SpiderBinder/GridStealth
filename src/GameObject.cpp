@@ -3,28 +3,28 @@
 
 GameObject::GameObject()
 {
-    sprite = new sf::Sprite();
+    //sprite = new sf::Sprite();
 }
 
 GameObject::~GameObject()
 {
-	delete sprite;
+	//delete sprite;
 }
 
 
 void GameObject::init(sf::Texture* _texture)
 {
-	sprite->setTexture(*_texture);
+	sprite.setTexture(*_texture);
 }
 
 void GameObject::render(sf::RenderWindow& window)
 {
-	sprite->setPosition(get_float_position());
-	window.draw(*sprite);
+	sprite.setPosition(get_float_position());
+	window.draw(sprite);
 }
 
 
-sf::Sprite* GameObject::get_sprite()
+sf::Sprite& GameObject::get_sprite()
 {
     return sprite;
 }

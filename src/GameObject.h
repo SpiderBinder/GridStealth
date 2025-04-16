@@ -14,7 +14,7 @@ enum CollisionType
 
 class GameObject
 {
-    sf::Sprite* sprite = nullptr;
+    sf::Sprite sprite;
     sf::Vector2i position = sf::Vector2i(0, 0);
 
     bool is_loaded = false;
@@ -26,7 +26,7 @@ public:
     virtual void init(sf::Texture* _texture);
     virtual void render(sf::RenderWindow& window);
 
-    sf::Sprite* get_sprite();
+    sf::Sprite& get_sprite();
     sf::Vector2i get_position();
 	sf::Vector2f get_float_position();
     void set_position(sf::Vector2i new_position);
