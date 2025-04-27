@@ -35,7 +35,7 @@ class Level
 
 	// Furniture and items
 	std::vector<GameObject> level_objects;
-	std::vector<Entity> level_entities;
+	std::vector<Enemy> level_enemies;
 	Player player;
 
 	bool load_from_file(std::string directory);
@@ -46,8 +46,10 @@ public:
 	~Level();
 
 	bool init(std::string tileset_name);
-	void update();
 	void render(sf::RenderWindow& window);
+	bool process_turn(int iteration);
+	void player_input(Entity::MoveType input);
+	void make_collisionmap();
 
 	CollisionType get_collision(sf::Vector2i position);
 	CollisionType get_collision(int x, int y);

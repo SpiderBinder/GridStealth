@@ -7,5 +7,5 @@ map:
 objects:
 objtype=furniture,type=DemoFurniture1,collision=0,posx=2,posy=2;
 entities:
-type=DemoEnemy1,collision=0,posx=3,posy=1;
+type=DemoEnemy1,collision=0,direction=2,posx=3,posy=1;
 end:
