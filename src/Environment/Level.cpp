@@ -137,6 +137,9 @@ bool Level::load_from_file(std::string directory)
 		row = newRow;
 	}
 
+	// Player start position storing
+	sf::Vector2i player_start = sf::Vector2i(0, 0);
+
 	// Converts mapdata numerical characters into TileType enums
 	for (int i = 0; i < mapdata.size(); i++)
 	{
@@ -156,6 +159,7 @@ bool Level::load_from_file(std::string directory)
 				break;
 			case '3':
 				tile = TileType::Start;
+				player_start = sf::Vector2i(j, i);
 				break;
 			case '4':
 				tile = TileType::Exit;
@@ -345,13 +349,85 @@ bool Level::load_from_file(std::string directory)
 			}
 		}
 
-		// TODO: Uncomment when Enemy class is implemented
 		level_enemies.push_back(Enemy(enemy_type, position, direction));
 	}
+
+	// Load Player
+	player = Player(player_start);
 
 	return success;
 }
 
+// Remakes collision map from wall_map as well as the objects and entities in the level
+void Level::make_collisionmap()
+{
+	if (wall_map.size() == 0 || wall_map[0].size() == 0)
+	{
+		return;
+	}
+
+	// TODO: Only rebuild collision map if wall_map or objects have changed
+
+	// Add collision for level walls
+	for (int i = 0; i < wall_map.size(); i++)
+	{
+		for (int j = 0; j < wall_map[0].size(); j++)
+		{
+			switch (wall_map[i][j])
+			{
+			case TileType::Wall:
+				collision_map[i][j] = CollisionType::Solid;
+				break;
+			case TileType::Window:
+				collision_map[i][j] = CollisionType::Transparent;
+				break;
+			case TileType::Empty:
+				collision_map[i][j] = CollisionType::Traversable;
+				break;
+			case TileType::Start:
+			case TileType::Exit:
+				// TODO: Change to solid when proper levels are implemented?
+				collision_map[i][j] = CollisionType::Traversable;
+				break;
+			default:
+				collision_map[i][j] = CollisionType::Null;
+				break;
+			}
+		}
+	}
+
+	// TODO: Add objects to collision map
+
+	// Add collision for entities
+	for (Entity entity : level_enemies)
+	{
+		sf::Vector2i position = entity.get_position();
+		collision_map[position.x][position.y] = entity.get_collision();
+	}
+	collision_map[player.get_position().x][player.get_position().y] = CollisionType::Solid;
+
+	return;
+}
+
+// Checks if a given position is colliding with a wall or object
+bool Level::check_collision(sf::Vector2i position)
+{
+	if ((position.x < 0 || position.x >= collision_map.size()) ||
+		(position.y < 0 || position.y >= collision_map[0].size()))
+	{
+		return true;
+	}
+	CollisionType tile = collision_map[position.x][position.y];
+	if (tile == CollisionType::Solid || tile == CollisionType::Transparent)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+// Initialises textures and sprites for the level
 // NOTE: Only to be run after load_from_file or entity and object assets will not be loaded
 bool Level::init(std::string tileset_name)
 {
@@ -417,14 +493,13 @@ bool Level::init(std::string tileset_name)
 		enemy.get_sprite().setScale(4.0f, 4.0f);
 	}
 
-	// NOTE: Uncomment when Player class is implemented
 	// Load player assets
-	/*if (!player.init())
+	if (!player.init())
 	{
-		std::cout << "Failed to load player: " << player.get_name() << std::endl;
+		std::cout << "Failed to load player assets" << std::endl;
 		success = false;
 	}
-	player.get_sprite().setScale(2.0f, 2.0f);*/
+	player.get_sprite().setScale(4.0f, 4.0f);
 
 	return success;
 }
@@ -471,7 +546,7 @@ void Level::render(sf::RenderWindow& window)
 	{
 		enemy.render(window);
 	}
-	//player.render(window);
+	player.render(window);
 }
 
 // Calculates movement of entities and specific level events
@@ -509,12 +584,15 @@ bool Level::process_turn(int iteration)
 			// Get next position from enemy
 			sf::Vector2i new_position = enemy.get_next_position(enemy.get_move_sequence()[move_iteration]);
 
-			// TODO: Check for collision
-			CollisionType tile = collision_map[new_position.x][new_position.y];
-			if (tile == CollisionType::Solid || tile == CollisionType::Transparent)
+			// Checks for collision
+			if (check_collision(new_position))
 			{
 				enemy.collisions++;
 				new_position = enemy.get_next_position(enemy.get_move_collision()[0]);
+				if (check_collision(new_position))
+				{
+					new_position = enemy.get_position();
+				}
 			}
 
 			enemy.set_position(new_position);
@@ -530,57 +608,17 @@ bool Level::process_turn(int iteration)
 	return finished;
 }
 
+
+// Receives player move and 
 void Level::player_input(Entity::MoveType input)
 {
+	sf::Vector2i new_position = player.get_next_position(input);
 
-}
-
-void Level::make_collisionmap()
-{
-	if (wall_map.size() == 0 || wall_map[0].size() == 0)
+	make_collisionmap();
+	if (check_collision(new_position))
 	{
-		return;
+		new_position = player.get_position();
 	}
 
-	// TODO: Only rebuild collision map if wall_map or objects have changed
-
-	// Add collision for level walls
-	for (int i = 0; i < wall_map.size(); i++)
-	{
-		for (int j = 0; j < wall_map[0].size(); j++)
-		{
-			switch (wall_map[i][j])
-			{
-			case TileType::Wall:
-				collision_map[i][j] = CollisionType::Solid;
-				break;
-			case TileType::Window:
-				collision_map[i][j] = CollisionType::Transparent;
-				break;
-			case TileType::Empty:
-				collision_map[i][j] = CollisionType::Traversable;
-				break;
-			case TileType::Start:
-			case TileType::Exit:
-				// TODO: Change to solid when proper levels are implemented?
-				collision_map[i][j] = CollisionType::Traversable;
-				break;
-			default:
-				collision_map[i][j] = CollisionType::Null;
-				break;
-			}
-		}
-	}
-
-	// TODO: Add objects to collision map
-
-	// Add collision for entities
-	for (Entity entity : level_enemies)
-	{
-		sf::Vector2i position = entity.get_position();
-		collision_map[position.x][position.y] = entity.get_collision();
-	}
-	collision_map[player.get_position().x][player.get_position().y] = CollisionType::Solid;
-
-	return;
+	player.set_position(new_position);
 }

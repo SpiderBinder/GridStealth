@@ -9,7 +9,8 @@ int main()
     std::cout << "Hello World!" << std::endl;
 
     sf::RenderWindow window(sf::VideoMode(1080, 720), "Hello Window!");
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
+    window.setKeyRepeatEnabled(false);
 
     sf::Clock clock;
 
@@ -35,8 +36,7 @@ int main()
                 window.close();
             }
             
-            if (event.type == sf::Event::KeyPressed ||
-                event.type == sf::Event::KeyReleased)
+            if (event.type == sf::Event::KeyPressed)
             {
                 game.key_input(event);
             }

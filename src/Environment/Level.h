@@ -40,6 +40,9 @@ class Level
 
 	bool load_from_file(std::string directory);
 
+	void make_collisionmap();
+	bool check_collision(sf::Vector2i position);
+
 public:
 	Level();
 	Level(std::string directory);
@@ -48,8 +51,8 @@ public:
 	bool init(std::string tileset_name);
 	void render(sf::RenderWindow& window);
 	bool process_turn(int iteration);
+
 	void player_input(Entity::MoveType input);
-	void make_collisionmap();
 
 	CollisionType get_collision(sf::Vector2i position);
 	CollisionType get_collision(int x, int y);

@@ -22,8 +22,20 @@ class Game
 	Level* loaded_level;
 	Level testlevel;
 
-    // Gamestates
+    // Gamestates & Gamestate Calculation
     bool processing_turn = false;
+    //bool paused = false;
+
+    // Debug/Dev stuff
+    float framerate = 0;
+
+    enum GamestateRequest
+    {
+        CanGameplayInput,
+		CanMenuInput,
+
+    };
+    bool check_gamestate(GamestateRequest request);
 
 public:
     Game(sf::RenderWindow& game_window);

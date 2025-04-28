@@ -75,6 +75,8 @@ bool Enemy::init()
 		break;
 	}
 
+	//set_direction(direction);
+
 	return success;
 }
 
