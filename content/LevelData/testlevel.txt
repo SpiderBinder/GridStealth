@@ -1,11 +1,11 @@
 map:
-0,0,0,0,0;
-0,4,2,2,0;
-1,2,2,2,1;
-0,2,2,3,0;
-0,0,0,0,0;
+0,0,0,0,0,0,0,0,0;
+0,2,2,2,0,2,2,4,0;
+1,2,2,2,2,2,0,2,1;
+0,3,2,2,0,2,2,2,0;
+0,0,0,0,0,0,0,0,0;
 objects:
 objtype=furniture,type=DemoFurniture1,collision=0,posx=2,posy=2;
 entities:
-type=DemoEnemy1,collision=0,direction=2,posx=3,posy=1;
+type=DemoEnemy1,collision=0,direction=2,posx=7,posy=1;
 end:

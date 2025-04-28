@@ -508,9 +508,9 @@ bool Level::init(std::string tileset_name)
 void Level::render(sf::RenderWindow& window)
 {
 	// Draw tiles
-	for (int y = 0; y < wall_map.size(); y++)
+	for (int y = 0; y < wall_map[0].size(); y++)
 	{
-		for (int x = 0; x < wall_map[y].size(); x++)
+		for (int x = 0; x < wall_map.size(); x++)
 		{
 			switch (wall_map[x][y])
 			{
