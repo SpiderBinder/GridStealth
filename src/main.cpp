@@ -6,9 +6,9 @@
 
 int main()
 {
-    std::cout << "Hello World!" << std::endl;
+    //std::cout << "Hello World!" << std::endl;
 
-    sf::RenderWindow window(sf::VideoMode(1080, 720), "Hello Window!");
+    sf::RenderWindow window(sf::VideoMode(1080, 720), "GridStealth - Live Demo");
     //window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(false);
 

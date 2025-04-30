@@ -613,7 +613,7 @@ bool Level::process_turn(int iteration)
 			sf::Vector2i new_position = enemy.get_next_position(enemy.get_move_sequence()[move_iteration]);
 
 			// Checks for collision
-			if (check_collision(new_position))
+			if (check_collision(new_position) && enemy.get_move_collision().size() > 0)
 			{
 				enemy.collisions++;
 				new_position = enemy.get_next_position(enemy.get_move_collision()[0]);
