@@ -279,15 +279,15 @@ bool Level::load_from_file(std::string directory)
 
 			if (identifier == "type")
 			{
-				if (info == "DemoEnemy1" || "0")
+				if (info == "DemoEnemy1" || info == "0")
 				{
 					enemy_type = EnemyType::DemoEnemy1;
 				}
-				else if (info == "DemoEnemy2" || "1")
+				else if (info == "DemoEnemy2" || info == "1")
 				{
 					enemy_type = EnemyType::DemoEnemy2;
 				}
-				else if (info == "DemoEnemy3" || "2")
+				else if (info == "DemoEnemy3" || info == "2")
 				{
 					enemy_type = EnemyType::DemoEnemy3;
 				}
