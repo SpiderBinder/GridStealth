@@ -496,6 +496,7 @@ bool Level::init(std::string tileset_name)
 		}
 		// NOTE: Remove once camera implemented
 		enemy.get_sprite().setScale(4.0f, 4.0f);
+		enemy.get_view_sprite().setScale(4.0f, 4.0f);
 	}
 
 	// Load player assets

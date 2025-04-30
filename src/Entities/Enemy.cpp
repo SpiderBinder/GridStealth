@@ -21,6 +21,8 @@ Enemy::Enemy(EnemyType type, sf::Vector2i position, sf::Vector2i direction)
 
 		move_sequence = { MoveType::Forward, MoveType::Forward };
 		move_collision = { MoveType::RightTurn };
+
+		view_area = { sf::Vector2i(0, -1) };
 		break;
 
 	case EnemyType::DemoEnemy2:
@@ -28,14 +30,17 @@ Enemy::Enemy(EnemyType type, sf::Vector2i position, sf::Vector2i direction)
 
 		move_sequence = { MoveType::Forward, MoveType::Forward, MoveType::Forward };
 		move_collision = { MoveType::Flip };
+
+		view_area = { sf::Vector2i(0, -1), sf::Vector2i(1, -1), sf::Vector2i(-1, -1) };
 		break;
 
 	case EnemyType::DemoEnemy3:
 		collision = CollisionType::Solid;
 
-		// TODO: Think of move sequence for demo enemy 3
-		move_sequence = {  };
+		move_sequence = { MoveType::LeftTurn };
 		move_collision = {  };
+
+		view_area = { sf::Vector2i(0, -1), sf::Vector2i(1, -1), sf::Vector2i(-1, -1), sf::Vector2i(0, -2), sf::Vector2i(1, -2), sf::Vector2i(-1, -2) };
 		break;
 	}
 }
@@ -75,11 +80,51 @@ bool Enemy::init()
 		break;
 	}
 
+	if (!view_texture.loadFromFile("../content/Assets/Entities/ViewSquare.png"))
+	{
+		std::cout << "Failed to load view area texture" << std::endl;
+		success = false;
+	}
+	view_sprite.setTexture(view_texture);
+
 	//set_direction(direction);
 
 	return success;
 }
 
+void Enemy::render(sf::RenderWindow& window)
+{
+	sprite.setPosition(position.x * 64, position.y * 64);
+	window.draw(sprite);
+
+	// Draw view area
+	for (sf::Vector2i offset : view_area)
+	{
+		if (direction.y == -1)
+		{
+			view_sprite.setPosition((position.x + offset.x) * 64, (position.y + offset.y) * 64);
+		}
+		else if (direction.y == 1)
+		{
+			view_sprite.setPosition((position.x - offset.x) * 64, (position.y - offset.y) * 64);
+		}
+		else if (direction.x == -1)
+		{
+			view_sprite.setPosition((position.x + offset.y) * 64, (position.y - offset.x) * 64);
+		}
+		else if (direction.x == 1)
+		{
+			view_sprite.setPosition((position.x - offset.y) * 64, (position.y + offset.x) * 64);
+		}
+
+		window.draw(view_sprite);
+	}
+}
+
+sf::Sprite& Enemy::get_view_sprite()
+{
+	return view_sprite;
+}
 
 EnemyType Enemy::get_enemy_type()
 {
@@ -88,5 +133,7 @@ EnemyType Enemy::get_enemy_type()
 
 std::vector<sf::Vector2i> Enemy::get_view_area()
 {
+	// TODO: Return absolute positions instead of relative to Enemy
+
 	return view_area;
 }
