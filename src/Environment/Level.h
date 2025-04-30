@@ -20,24 +20,31 @@ enum TileType
 	Window,
 	Empty,
 	Start,
-	Exit
+	End
 };
 
 class Level
 {
+	// Rendering
 	sf::Texture tileset;
 	sf::Sprite sprite_wall;
 	sf::Sprite sprite_window;
 	sf::Sprite sprite_empty;
+	sf::Sprite sprite_objective;
 
+	// Data
 	std::vector<std::vector<TileType>> wall_map;
 	std::vector<std::vector<CollisionType>> collision_map;
 
-	// Furniture and items
 	std::vector<GameObject> level_objects;
 	std::vector<Enemy> level_enemies;
 	Player player;
 
+	// Levelstate
+	bool objective_reached = false;
+	bool exit_reached = false;
+
+	// Internal Functions
 	bool load_from_file(std::string directory);
 
 	void make_collisionmap();

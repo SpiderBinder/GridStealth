@@ -162,7 +162,7 @@ bool Level::load_from_file(std::string directory)
 				player_start = sf::Vector2i(j, i);
 				break;
 			case '4':
-				tile = TileType::Exit;
+				tile = TileType::End;
 				break;
 			default:
 				tile = TileType::Empty;
@@ -385,7 +385,7 @@ void Level::make_collisionmap()
 				collision_map[i][j] = CollisionType::Traversable;
 				break;
 			case TileType::Start:
-			case TileType::Exit:
+			case TileType::End:
 				// TODO: Change to solid when proper levels are implemented?
 				collision_map[i][j] = CollisionType::Traversable;
 				break;
@@ -444,14 +444,18 @@ bool Level::init(std::string tileset_name)
 	sprite_wall.setTexture(tileset);
 	sprite_window.setTexture(tileset);
 	sprite_empty.setTexture(tileset);
+	sprite_objective.setTexture(tileset);
 
 	sprite_wall.setTextureRect(sf::IntRect(0, 0, 16, 16));
 	sprite_window.setTextureRect(sf::IntRect(16, 0, 16, 16));
 	sprite_empty.setTextureRect(sf::IntRect(0, 16, 16, 16));
+	sprite_objective.setTextureRect(sf::IntRect(16, 16, 16, 16));
 
+	// NOTE: Remove once camera implemented
 	sprite_wall.setScale(4.0f, 4.0f);
 	sprite_window.setScale(4.0f, 4.0f);
 	sprite_empty.setScale(4.0f, 4.0f);
+	sprite_objective.setScale(4.0f, 4.0f);
 
 	// NOTE: Uncomment when Furniture and Item classes are implemented
 	// Load furniture and item assets
@@ -490,6 +494,7 @@ bool Level::init(std::string tileset_name)
 			std::cout << "Failed to load entity: " << enemy_name << std::endl;
 			success = false;
 		}
+		// NOTE: Remove once camera implemented
 		enemy.get_sprite().setScale(4.0f, 4.0f);
 	}
 
@@ -523,10 +528,32 @@ void Level::render(sf::RenderWindow& window)
 				window.draw(sprite_window);
 				break;
 			case TileType::Empty:
-			case TileType::Start:
-			case TileType::Exit:
 				sprite_empty.setPosition(x * 64, y * 64);
 				window.draw(sprite_empty);
+				break;
+			case TileType::Start:
+				if (!objective_reached)
+				{
+					sprite_empty.setPosition(x * 64, y * 64);
+					window.draw(sprite_empty);
+				}
+				else
+				{
+					sprite_objective.setPosition(x * 64, y * 64);
+					window.draw(sprite_objective);
+				}
+				break;
+			case TileType::End:
+				if (objective_reached)
+				{
+					sprite_empty.setPosition(x * 64, y * 64);
+					window.draw(sprite_empty);
+				}
+				else
+				{
+					sprite_objective.setPosition(x * 64, y * 64);
+					window.draw(sprite_objective);
+				}
 				break;
 			default:
 				break;
@@ -618,6 +645,17 @@ void Level::player_input(Entity::MoveType input)
 	if (check_collision(new_position))
 	{
 		new_position = player.get_position();
+	}
+
+	TileType tile = wall_map[new_position.x][new_position.y];
+	if (!objective_reached && tile == TileType::End)
+	{
+		objective_reached = true;
+	}
+	else if (objective_reached && tile == TileType::Start)
+	{
+		exit_reached = true;
+		std::cout << "Level finished!" << std::endl;
 	}
 
 	player.set_position(new_position);
