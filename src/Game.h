@@ -33,7 +33,7 @@ class Game
 	int action_remaining = action_total;
     float turn_length = 10.f;
     float aware_mult = 0.5f;
-    float alert_mult = 0.3f;
+    float alert_mult = 0.2f;
     bool timer_aware = false;
 	bool timer_alert = false;
     // Enemy turn items

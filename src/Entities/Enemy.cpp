@@ -133,7 +133,31 @@ EnemyType Enemy::get_enemy_type()
 
 std::vector<sf::Vector2i> Enemy::get_view_area()
 {
-	// TODO: Return absolute positions instead of relative to Enemy
+	std::vector<sf::Vector2i> return_area;
 
-	return view_area;
+	// NOTE: In memory of when I used '=' instead of '==' like a buffoon
+	// NOTE: An utter dolt
+	// NOTE: A complete fool
+	// Return absolute positions instead of relative to Enemy
+	for (sf::Vector2i area : view_area)
+	{
+		if (direction.y == 1)
+		{
+			area = sf::Vector2i(-area.x, -area.y);
+		}
+		else if (direction.x == -1)
+		{
+			area = sf::Vector2i(area.y, -area.x);
+		}
+		else if (direction.x == 1)
+		{
+			area = sf::Vector2i(-area.y, area.x);
+		}
+
+		area += position;
+
+		return_area.push_back(area);
+	}
+
+	return return_area;
 }

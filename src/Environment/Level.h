@@ -44,11 +44,16 @@ class Level
 	bool objective_reached = false;
 	bool exit_reached = false;
 
+	bool aware = false;
+	int alert_counter = 0;
+	bool caught = false;
+
 	// Internal Functions
 	bool load_from_file(std::string directory);
 
 	void make_collisionmap();
 	bool check_collision(sf::Vector2i position);
+	bool is_view_area(sf::Vector2i position);
 
 public:
 	Level();
@@ -61,9 +66,13 @@ public:
 
 	void player_input(Entity::MoveType input);
 
-	CollisionType get_collision(sf::Vector2i position);
-	CollisionType get_collision(int x, int y);
-	std::vector<Entity>& get_entities();
+	//CollisionType get_collision(sf::Vector2i position);
+	//CollisionType get_collision(int x, int y);
+	//std::vector<Entity>& get_entities();
+
+	bool is_aware();
+	bool is_alert();
+	bool is_caught();
 };
 
 #endif // GRIDSTEALTH_ENVIRONMENT_LEVEL_H

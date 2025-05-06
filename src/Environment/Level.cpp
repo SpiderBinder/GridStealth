@@ -426,6 +426,25 @@ bool Level::check_collision(sf::Vector2i position)
 	return false;
 }
 
+// Checks if a given position is in the view area of an entity
+bool Level::is_view_area(sf::Vector2i position)
+{
+	// NOTE: Inefficient but works
+	// Checks each enemy for matching view area
+	for (Enemy enemy : level_enemies)
+	{
+		std::vector<sf::Vector2i> view_area = enemy.get_view_area();
+		for (sf::Vector2i area : view_area)
+		{
+			if (position == area)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
 
 // Initialises textures and sprites for the level
 // NOTE: Only to be run after load_from_file or entity and object assets will not be loaded
@@ -584,7 +603,7 @@ bool Level::process_turn(int iteration)
 
 	// Force ends the turn after 10 iterations of movement
 	// NOTE: May make a less 'hacked' solution to infinite collision loops later
-	if (iteration > 10)
+	if (iteration > 12)
 	{
 		return true;
 	}
@@ -633,6 +652,44 @@ bool Level::process_turn(int iteration)
 	// Process non-entity movement
 	// NOTE: Currently no non-entity movement
 
+	// Check for player nearby enemy
+	if (!aware)
+	{
+		for (Enemy enemy : level_enemies)
+		{
+			sf::Vector2i topleft = sf::Vector2i(enemy.get_position().x - 1, enemy.get_position().y - 1);
+			sf::Vector2i bottomright = sf::Vector2i(enemy.get_position().x + 1, enemy.get_position().y + 1);
+
+			if (player.get_position().x >= topleft.x &&
+				player.get_position().x <= bottomright.x &&
+				player.get_position().y >= topleft.y &&
+				player.get_position().y <= bottomright.y)
+			{
+				aware = true;
+				std::cout << "Now aware!" << std::endl;
+			}
+		}
+	}
+
+	// Check for player in view area
+	if (is_view_area(player.get_position()))
+	{
+		if (finished)
+		{
+			caught = true;
+			std::cout << "Caught!" << std::endl;
+		}
+		else
+		{
+			std::cout << "Alert!" << std::endl;
+			alert_counter = 3;
+		}
+	}
+
+	if (finished)
+	{
+		alert_counter--;
+	}
 	return finished;
 }
 
@@ -652,6 +709,7 @@ void Level::player_input(Entity::MoveType input)
 	if (!objective_reached && tile == TileType::End)
 	{
 		objective_reached = true;
+		aware = true;
 	}
 	else if (objective_reached && tile == TileType::Start)
 	{
@@ -659,5 +717,26 @@ void Level::player_input(Entity::MoveType input)
 		std::cout << "Level finished!" << std::endl;
 	}
 
+	if (is_view_area(player.get_position()))
+	{
+		alert_counter = 3;
+	}
+
 	player.set_position(new_position);
+}
+
+
+bool Level::is_aware()
+{
+	return aware;
+}
+
+bool Level::is_alert()
+{
+	return alert_counter > 0;
+}
+
+bool Level::is_caught()
+{
+	return caught;
 }

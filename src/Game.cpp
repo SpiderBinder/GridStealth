@@ -65,7 +65,7 @@ void Game::update(float dt)
     if (processing_turn && run_turn)
     {
         run_turn = false;
-        std::cout << "Turn " << turn_iteration << " complete" << std::endl;
+        //std::cout << "Turn " << turn_iteration << " complete" << std::endl;
 
         if (loaded_level->process_turn(turn_iteration))
         {
@@ -81,6 +81,9 @@ void Game::update(float dt)
     }
     else if (!processing_turn)
     {
+        timer_aware = loaded_level->is_aware();
+		timer_alert = loaded_level->is_alert();
+
         // Checking for debug turns
         if (debug_turns)
         {
@@ -105,6 +108,17 @@ void Game::update(float dt)
                 time_string_temp = "0" + time_string_temp;
             }
             stopwatch_text.setString(std::to_string(time / 60) + ":" + time_string_temp);
+
+            sf::Color colour = sf::Color(193, 203, 220);
+            if (timer_aware)
+            {
+                colour = sf::Color(254, 231, 97);
+                if (timer_alert)
+                {
+                    colour = sf::Color(255, 0, 68);
+                }
+            }
+            stopwatch_text.setColor(colour);
 
             // Check if turn timer is up
             if (time <= 0 && !processing_turn && !debug_turns)
