@@ -11,6 +11,7 @@ bool Game::init()
 {
     bool success = true;
 
+	turn_timer = sf::Clock();
     turn_delay_timer = sf::Clock();
 
     // Load stopwatch assets
@@ -52,11 +53,15 @@ void Game::update(float dt)
 {
 	framerate = 1.0f / dt;
 
+    // TODO: Code for updating current menu
+
+    // Check for next turn calculation
     if (processing_turn && turn_delay_timer.getElapsedTime().asMilliseconds() >= turn_delay)
     {
         run_turn = true;
         turn_delay_timer.restart();
     }
+    // Process enemy turn iteration
     if (processing_turn && run_turn)
     {
         run_turn = false;
@@ -66,15 +71,59 @@ void Game::update(float dt)
         {
             processing_turn = false;
             turn_iteration = 0;
+
+			turn_timer.restart();
 		}
         else
         {
             turn_iteration++;
         }
     }
-    else
+    else if (!processing_turn)
     {
+        // Checking for debug turns
+        if (debug_turns)
+        {
+			action_remaining = action_total;
 
+			// Set stopwatch animation for action counter
+            stopwatch_text.setString("9:99");
+            stopwatch_sprite.setTextureRect(sf::IntRect(0, 0, 32, 32));
+        }
+        else
+        {
+            // Calculate turn timer string
+            float turn_length_temp = turn_length * (timer_alert ? alert_mult : (timer_aware ? aware_mult : 1.f));
+            int time = turn_length_temp - turn_timer.getElapsedTime().asSeconds();
+            if (time < 0)
+            {
+                time = 0;
+            }
+            std::string time_string_temp = std::to_string(time % 60);
+            if (time % 60 < 10)
+            {
+                time_string_temp = "0" + time_string_temp;
+            }
+            stopwatch_text.setString(std::to_string(time / 60) + ":" + time_string_temp);
+
+            // Check if turn timer is up
+            if (time <= 0 && !processing_turn && !debug_turns)
+            {
+                end_turn();
+            }
+
+            // Set stopwatch animation for action counter
+            int animation_num = action_total - action_remaining;
+            if (animation_num < 0)
+            {
+                animation_num = 0;
+            }
+            if (animation_num > action_total)
+            {
+                animation_num = action_total;
+            }
+            stopwatch_sprite.setTextureRect(sf::IntRect((animation_num) * 32, 0, 32, 32));
+        }
     }
 }
 
@@ -99,38 +148,109 @@ void Game::key_input(sf::Event event)
 		std::cout << "Framerate: " << framerate << std::endl;
         break;
 
-    // NOTE: Temporary force turnstep for testing
+    // Toggle debug options
+    case sf::Keyboard::Scancode::Num1:
+		debug_turns = !debug_turns;
+        break;
+	case sf::Keyboard::Scancode::Num2:
+		//debug_view = !debug_view;
+        break;
+
+    // Force the end of a turn for debugging
     case sf::Keyboard::Scancode::Space:
-		if (!processing_turn)
+		if (!processing_turn && debug_turns && check_gamestate(GamestateRequest::CanGameplayInput))
 		{
-			processing_turn = true;
-			run_turn = true;
-            turn_delay_timer.restart();
+            end_turn();
 		}
 		break;
 
+    // Player movement
     case sf::Keyboard::Scancode::Up:
-        if (check_gamestate(GamestateRequest::CanGameplayInput))
+        if (!in_menu)
         {
-            loaded_level->player_input(Entity::MoveType::Forward);
+            if (!check_gamestate(GamestateRequest::CanGameplayInput))
+            {
+                break;
+            }
+			if (action_remaining > 0)
+			{
+				loaded_level->player_input(Entity::MoveType::Forward);
+				action_remaining--;
+			}
+            if (action_remaining <= 0)
+			{
+				end_turn();
+			}
+        }
+        else
+        {
+            // TODO: Add code for navigating current menu
         }
         break;
 	case sf::Keyboard::Scancode::Down:
-        if (check_gamestate(GamestateRequest::CanGameplayInput))
+        if (!in_menu)
         {
-            loaded_level->player_input(Entity::MoveType::Backward);
+            if (!check_gamestate(GamestateRequest::CanGameplayInput))
+            {
+                break;
+            }
+            if (action_remaining > 0)
+            {
+                loaded_level->player_input(Entity::MoveType::Backward);
+                action_remaining--;
+            }
+            if (action_remaining <= 0)
+            {
+                end_turn();
+            }
+        }
+        else
+        {
+            // TODO: Add code for navigating current menu
         }
         break;
 	case sf::Keyboard::Scancode::Left:
-		if (check_gamestate(GamestateRequest::CanGameplayInput))
-		{
-			loaded_level->player_input(Entity::MoveType::Left);
-		}
+        if (!in_menu)
+        {
+            if (!check_gamestate(GamestateRequest::CanGameplayInput))
+            {
+                break;
+            }
+            if (action_remaining > 0)
+            {
+                loaded_level->player_input(Entity::MoveType::Left);
+                action_remaining--;
+            }
+            if (action_remaining <= 0)
+            {
+                end_turn();
+            }
+        }
+        else
+        {
+            // TODO: Add code for navigating current menu
+        }
 		break;
 	case sf::Keyboard::Scancode::Right:
-        if (check_gamestate(GamestateRequest::CanGameplayInput))
+        if (!in_menu)
         {
-            loaded_level->player_input(Entity::MoveType::Right);
+            if (!check_gamestate(GamestateRequest::CanGameplayInput))
+            {
+                break;
+            }
+            if (action_remaining > 0)
+            {
+                loaded_level->player_input(Entity::MoveType::Right);
+                action_remaining--;
+            }
+            if (action_remaining <= 0)
+            {
+                end_turn();
+            }
+        }
+        else
+        {
+            // TODO: Add code for navigating current menu
         }
         break;
     default:
@@ -164,4 +284,17 @@ bool Game::check_gamestate(GamestateRequest request)
 	}
 
 	return result;
+}
+
+void Game::end_turn()
+{
+    processing_turn = true;
+    run_turn = true;
+    turn_delay_timer.restart();
+
+	//turn_timer.restart();
+    action_remaining = action_total;
+
+    stopwatch_sprite.setTextureRect(sf::IntRect(action_total * 32, 0, 32, 32));
+	stopwatch_text.setString("0:00");
 }

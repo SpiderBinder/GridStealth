@@ -25,9 +25,18 @@ class Game
 
     // Gamestates & Gamestate Calculation
     //bool paused = false;
-	//bool in_menu = true;
+	bool in_menu = false;
 
+    // Player turn items
     sf::Clock turn_timer;
+    int action_total = 3;
+	int action_remaining = action_total;
+    float turn_length = 10.f;
+    float aware_mult = 0.5f;
+    float alert_mult = 0.3f;
+    bool timer_aware = false;
+	bool timer_alert = false;
+    // Enemy turn items
     bool processing_turn = false;
     int turn_iteration = 0;
     sf::Clock turn_delay_timer;
@@ -47,6 +56,8 @@ class Game
 
     };
     bool check_gamestate(GamestateRequest request);
+
+	void end_turn();
 
 public:
     Game(sf::RenderWindow& game_window);

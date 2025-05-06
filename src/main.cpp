@@ -8,8 +8,8 @@ int main()
 {
     //std::cout << "Hello World!" << std::endl;
 
-    sf::RenderWindow window(sf::VideoMode(1080, 720), "GridStealth - Live Demo");
-    //window.setFramerateLimit(60);
+    sf::RenderWindow window(sf::VideoMode(1080, 720), "GridStealth - Demo");
+    window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(false);
 
     sf::Clock clock;
