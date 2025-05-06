@@ -13,6 +13,27 @@ bool Game::init()
 
     turn_delay_timer = sf::Clock();
 
+    // Load stopwatch assets
+    if (!stopwatch_texture.loadFromFile("../content/Assets/UI/Stopwatch.png"))
+    {
+        std::cout << "Error: Stopwatch texture failed to load" << std::endl;
+        success = false;
+    }
+    stopwatch_sprite.setTexture(stopwatch_texture);
+    stopwatch_sprite.setTextureRect(sf::IntRect(0, 0, 32, 32));
+    stopwatch_sprite.setScale(4, 4); // NOTE: Temporary while camera isn't set up
+    stopwatch_sprite.setPosition(window.getSize().x - stopwatch_sprite.getGlobalBounds().width - 16, 16);
+    if (!stopwatch_font.loadFromFile("../content/Assets/UI/StopwatchNumbers.ttf"))
+    {
+        std::cout << "Error: Stopwatch font failed to load" << std::endl;
+        success = false;
+    }
+	stopwatch_text.setFont(stopwatch_font);
+	stopwatch_text.setCharacterSize(64);// NOTE: "* 4" temporary while camera isn't set up
+	stopwatch_text.setFillColor(sf::Color(193, 203, 220));
+    stopwatch_text.setPosition(stopwatch_sprite.getPosition() + sf::Vector2f(9 * 4, 8));
+    stopwatch_text.setString("0:00");
+
 	// NOTE: For early builds only, to be replaced by multiple levels
     testlevel = Level("../content/LevelData/testlevel.txt");
     if (!testlevel.init("DemoTileset"))
@@ -31,7 +52,7 @@ void Game::update(float dt)
 {
 	framerate = 1.0f / dt;
 
-    if (processing_turn && turn_delay_timer.getElapsedTime().asMilliseconds() >= 1000)
+    if (processing_turn && turn_delay_timer.getElapsedTime().asMilliseconds() >= turn_delay)
     {
         run_turn = true;
         turn_delay_timer.restart();
@@ -60,6 +81,9 @@ void Game::update(float dt)
 void Game::render()
 {
     loaded_level->render(window);
+
+	window.draw(stopwatch_sprite);
+    window.draw(stopwatch_text);
 }
 
 

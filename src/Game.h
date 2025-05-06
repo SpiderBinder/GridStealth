@@ -11,23 +11,34 @@
 
 class Game
 {
+    // Rendering
     sf::RenderWindow& window;
 
-    // Misc 'Game' items
-    sf::Clock turn_delay_timer;
-    int turn_iteration = 0;
-    bool run_turn = false;
+    sf::Texture stopwatch_texture;
+	sf::Sprite stopwatch_sprite;
+    sf::Font stopwatch_font;
+	sf::Text stopwatch_text;
 
-    // Objects
-	Level* loaded_level;
+    // Game Objects
+	Level* loaded_level = nullptr;
 	Level testlevel;
 
     // Gamestates & Gamestate Calculation
-    bool processing_turn = false;
     //bool paused = false;
+	//bool in_menu = true;
+
+    sf::Clock turn_timer;
+    bool processing_turn = false;
+    int turn_iteration = 0;
+    sf::Clock turn_delay_timer;
+    float turn_delay = 500.f;
+    bool run_turn = false;
 
     // Debug/Dev stuff
     float framerate = 0;
+
+    bool debug_turns = false;
+    //bool debug_view = false;
 
     enum GamestateRequest
     {
