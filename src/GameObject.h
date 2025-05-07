@@ -2,6 +2,8 @@
 #ifndef GRIDSTEALTH_GAMEOBJECT_H
 #define GRIDSTEALTH_GAMEOBJECT_H
 
+#include <iostream>
+
 #include <SFML/Graphics.hpp>
 
 enum CollisionType

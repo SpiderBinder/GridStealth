@@ -23,6 +23,30 @@ bool Player::init()
 		success = false;
 	}
 	sprite.setTexture(texture);
+	sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
 
 	return success;
+}
+
+
+void Player::update_sprite_direction()
+{
+	if (direction.y == -1)
+	{
+		sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+	}
+	else if (direction.x == 1)
+	{
+		sprite.setTextureRect(sf::IntRect(16, 0, 16, 16));
+	}
+	else if (direction.y == 1)
+	{
+		sprite.setTextureRect(sf::IntRect(16, 16, 16, 16));
+	}
+	else if (direction.x == -1)
+	{
+		sprite.setTextureRect(sf::IntRect(0, 16, 16, 16));
+	}
+
+	sprite.setPosition(get_real_position());
 }

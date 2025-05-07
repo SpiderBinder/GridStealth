@@ -13,6 +13,7 @@ public:
 
 	bool init() override;
 
+	void update_sprite_direction();
 };
 
 #endif // GRIDSTEALTH_ENTITIES_PLAYER_H

@@ -36,7 +36,8 @@ class Level
 	std::vector<std::vector<TileType>> wall_map;
 	std::vector<std::vector<CollisionType>> collision_map;
 
-	std::vector<GameObject> level_objects;
+	std::vector<Furniture> level_furniture;
+	std::vector<Item> level_items;
 	std::vector<Enemy> level_enemies;
 	Player player;
 

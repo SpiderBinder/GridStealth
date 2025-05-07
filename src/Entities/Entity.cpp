@@ -82,20 +82,4 @@ std::vector<Entity::MoveType> Entity::get_move_collision()
 void Entity::set_direction(sf::Vector2i new_direction)
 {
 	direction = new_direction;
-
-	// NOTE: Does not work for some reason that I will figure out another time >:(
-	/*sf::Vector2f centre = sf::Vector2f(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
-	sprite.setOrigin(centre);
-
-	sprite.setRotation(direction.x * -90);
-	if (direction.y == -1)
-	{
-		sprite.setRotation(180);
-	}
-	else if (direction.y == 1)
-	{
-		sprite.setRotation(0);
-	}
-
-	sprite.setOrigin(0, 0);*/
 }

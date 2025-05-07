@@ -192,8 +192,11 @@ bool Level::load_from_file(std::string directory)
 			}
 		}
 
-		bool isfurniture;
-		CollisionType collision;
+		bool isfurniture = true;
+		Furniture::FurnitureType furniture_type = Furniture::FurnitureType::Error;
+		//Item::ItemType item_type = Item::ItemType::Error;
+		int id = -1;
+		int containid = -1;
 		sf::Vector2i position;
 		for (std::string info : objectinfo)
 		{
@@ -208,23 +211,35 @@ bool Level::load_from_file(std::string directory)
 				else
 					isfurniture = false;
 			}
-			else if (identifier == "collision")
+			else if (identifier == "type")
 			{
-				switch (info[0])
+				if (isfurniture)
 				{
-				case '0':
-					collision = CollisionType::Solid;
-					break;
-				case '1':
-					collision = CollisionType::Transparent;
-					break;
-				case '2':
-					collision = CollisionType::Traversable;
-					break;
-				default:
-					collision = CollisionType::Null;
-					break;
+					if (info == "Table")
+					{
+						furniture_type = Furniture::FurnitureType::Table;
+					}
+					else if (info == "Door")
+					{
+						furniture_type = Furniture::FurnitureType::Door;
+					}
+
 				}
+				else
+				{
+					if (info == "Key")
+					{
+						//item_type = Item::ItemType::Key;
+					}
+				}
+			}
+			else if (identifier == "id")
+			{
+				id = std::stoi(info);
+			}
+			else if (identifier == "containid")
+			{
+				containid = std::stoi(info);
 			}
 			else if (identifier == "posx")
 			{
@@ -236,14 +251,17 @@ bool Level::load_from_file(std::string directory)
 			}
 		}
 
-		// TODO: Uncomment when Furniture and Item classes are implemented
 		if (isfurniture)
 		{
-			//objects.push_back(Furniture(collision, position));
+			level_furniture.push_back(Furniture(furniture_type, position));
+			/*if (level_furniture[level_furniture.size() - 1].is_container() && containid >= 0)
+			{
+
+			}*/
 		}
 		else
 		{
-			//objects.push_back(Item(collision, position));
+			//level_items.push_back(Item(collision, position));
 		}
 	}
 
@@ -266,9 +284,8 @@ bool Level::load_from_file(std::string directory)
 			}
 		}
 
-		// NOTE: May be good to make a 'NULL' enemytype for error checking
+		// NOTE: May be good to make an 'Error' enemytype for error checking
 		EnemyType enemy_type = EnemyType::DemoEnemy1;
-		CollisionType collision;
 		sf::Vector2i position;
 		sf::Vector2i direction;
 		for (std::string info : entityinfo)
@@ -295,26 +312,6 @@ bool Level::load_from_file(std::string directory)
 				{
 					std::cout << "Invalid enemy type: " << info << std::endl;
 					success = false;
-				}
-			}
-			// NOTE: Covered by hardcoded enemy types and currently unused
-			// (Potential use for custom enemy types?)
-			else if (identifier == "collision")
-			{
-				switch (info[0])
-				{
-				case '0':
-					collision = CollisionType::Solid;
-					break;
-				case '1':
-					collision = CollisionType::Transparent;
-					break;
-				case '2':
-					collision = CollisionType::Traversable;
-					break;
-				default:
-					collision = CollisionType::Null;
-					break;
 				}
 			}
 			else if (identifier == "direction")
@@ -396,7 +393,17 @@ void Level::make_collisionmap()
 		}
 	}
 
-	// TODO: Add objects to collision map
+	// TODO: Add furniture to collision map
+	for (Furniture furniture : level_furniture)
+	{
+		sf::Vector2i position = furniture.get_position();
+		CollisionType collision = furniture.get_collision();
+		// TODO: Make this not overwrite collisions higher than the furniture collision that aren't of type 'Solid'
+		if (collision_map[position.x][position.y] != CollisionType::Solid)
+		{
+			collision_map[position.x][position.y] = collision;
+		}
+	}
 
 	// Add collision for entities
 	for (Entity entity : level_enemies)
@@ -476,17 +483,15 @@ bool Level::init(std::string tileset_name)
 	sprite_empty.setScale(4.0f, 4.0f);
 	sprite_objective.setScale(4.0f, 4.0f);
 
-	// NOTE: Uncomment when Furniture and Item classes are implemented
-	// Load furniture and item assets
-	/*for (GameObject object : level_objects)
+	// Load furniture assets
+	for (Furniture& furniture : level_furniture)
 	{
-		if (!object.init())
+		if (!furniture.init())
 		{
-			std::cout << "Failed to load object: " << object.get_name() << std::endl;
 			success = false;
 		}
-		object.get_sprite().setScale(2.0f, 2.0f);
-	}*/
+	}
+	// TODO: Items
 
 	// Load enemy assets
 	for (Enemy& enemy : level_enemies)
@@ -581,12 +586,16 @@ void Level::render(sf::RenderWindow& window)
 		}
 	}
 
-	// NOTE: Uncomment when Furniture and Item classes are implemented
-	// Draw Furniture and Items
-	/*for (GameObject &object : level_objects)
+	// Draw Furniture
+	for (Furniture& furniture : level_furniture)
 	{
-		object.render(window);
-	}*/
+		furniture.render(window);
+	}
+	// Draw Items
+	for (Item& item : level_items)
+	{
+		//item.render(window);
+	}
 
 	// Draw entities
 	for (Enemy& enemy : level_enemies)
@@ -723,6 +732,7 @@ void Level::player_input(Entity::MoveType input)
 	}
 
 	player.set_position(new_position);
+	player.update_sprite_direction();
 }
 
 

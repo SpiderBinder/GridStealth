@@ -208,7 +208,7 @@ void Game::key_input(sf::Event event)
             {
                 break;
             }
-            if (action_remaining > 0)
+            /*if (action_remaining > 0)
             {
                 loaded_level->player_input(Entity::MoveType::Backward);
                 action_remaining--;
@@ -216,7 +216,7 @@ void Game::key_input(sf::Event event)
             if (action_remaining <= 0)
             {
                 end_turn();
-            }
+            }*/
         }
         else
         {
@@ -230,7 +230,8 @@ void Game::key_input(sf::Event event)
             {
                 break;
             }
-            if (action_remaining > 0)
+			loaded_level->player_input(Entity::MoveType::LeftTurn);
+            /*if (action_remaining > 0)
             {
                 loaded_level->player_input(Entity::MoveType::Left);
                 action_remaining--;
@@ -238,7 +239,7 @@ void Game::key_input(sf::Event event)
             if (action_remaining <= 0)
             {
                 end_turn();
-            }
+            }*/
         }
         else
         {
@@ -252,7 +253,8 @@ void Game::key_input(sf::Event event)
             {
                 break;
             }
-            if (action_remaining > 0)
+			loaded_level->player_input(Entity::MoveType::RightTurn);
+            /*if (action_remaining > 0)
             {
                 loaded_level->player_input(Entity::MoveType::Right);
                 action_remaining--;
@@ -260,7 +262,7 @@ void Game::key_input(sf::Event event)
             if (action_remaining <= 0)
             {
                 end_turn();
-            }
+            }*/
         }
         else
         {
