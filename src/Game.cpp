@@ -269,6 +269,25 @@ void Game::key_input(sf::Event event)
             // TODO: Add code for navigating current menu
         }
         break;
+
+    case sf::Keyboard::Scancode::Z:
+        if (!in_menu)
+        {
+            if (!check_gamestate(GamestateRequest::CanGameplayInput))
+            {
+                break;
+            }
+			if (action_remaining > 0)
+			{
+				loaded_level->player_interact();
+				action_remaining--;
+			}
+            if (action_remaining <= 0)
+            {
+                end_turn();
+            }
+        }
+        break;
     default:
         break;
     }

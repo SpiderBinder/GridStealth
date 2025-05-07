@@ -735,6 +735,24 @@ void Level::player_input(Entity::MoveType input)
 	player.update_sprite_direction();
 }
 
+void Level::player_interact()
+{
+	sf::Vector2i tile = player.get_position() + player.get_direction();
+
+	// TODO: Code for player held item
+
+	for (Furniture& furniture : level_furniture)
+	{
+		if (furniture.get_position() == tile)
+		{
+			furniture.interact();
+			break;
+		}
+	}
+
+	// TODO: Code to check for deletion of held item
+}
+
 
 bool Level::is_aware()
 {

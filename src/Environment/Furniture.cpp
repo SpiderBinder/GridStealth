@@ -74,6 +74,32 @@ void Furniture::render(sf::RenderWindow& window)
 	window.draw(sprite);
 }
 
+bool Furniture::interact()
+{
+	if (type == Door)
+	{
+		if (!locked)
+		{
+			toggle = !toggle;
+			collision = toggle ? CollisionType::Solid : CollisionType::Traversable;
+			sprite.setTextureRect(sf::IntRect(16 * (toggle ? 1 : 0), 16 * (locked ? 1 : 0), 16, 16));
+		}
+	}
+
+	return false;
+}
+
+bool Furniture::interact(Item item)
+{
+	if (lockable && locked)
+	{
+		// TODO: Check for interaction with compatible key
+		// Return true if successful to delete key item
+	}
+
+	return false;
+}
+
 
 Furniture::FurnitureType Furniture::get_type()
 {

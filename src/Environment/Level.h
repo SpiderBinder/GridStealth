@@ -66,6 +66,7 @@ public:
 	bool process_turn(int iteration);
 
 	void player_input(Entity::MoveType input);
+	void player_interact();
 
 	//CollisionType get_collision(sf::Vector2i position);
 	//CollisionType get_collision(int x, int y);

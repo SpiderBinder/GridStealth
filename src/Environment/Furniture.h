@@ -34,6 +34,8 @@ public:
 
 	bool init();
 	void render(sf::RenderWindow& window) override;
+	bool interact();
+	bool interact(Item item);
 
 	FurnitureType get_type();
 
